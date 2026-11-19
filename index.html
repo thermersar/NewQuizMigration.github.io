@@ -1,1 +1,229 @@
-# NewQuizMigration
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Goodwin New Quizzes Guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&display=swap" rel="stylesheet">
+<style>
+:root {
+  /* Layout idea: one narrow reading column; a quick-answer lead, then a label-and-answer list, then a plain timeline. */
+  --bg: #f6f7f9;
+  --surface: #ffffff;
+  --ink: #17202e;
+  --muted: #55606f;
+  --line: #d9dee5;
+  --accent: #1c4f8f;
+  --accent-soft: #e4edf8;
+  --note: #fff4d6;
+  --note-ink: #4a3a05;
+  --font-display: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --font-body: "Atkinson Hyperlegible", "Segoe UI", system-ui, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #11161d;
+    --surface: #19212b;
+    --ink: #e8ecf1;
+    --muted: #a3adba;
+    --line: #2d3846;
+    --accent: #8db8ee;
+    --accent-soft: #1f2f45;
+    --note: #3a3010;
+    --note-ink: #f2e3ae;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #11161d;
+  --surface: #19212b;
+  --ink: #e8ecf1;
+  --muted: #a3adba;
+  --line: #2d3846;
+  --accent: #8db8ee;
+  --accent-soft: #1f2f45;
+  --note: #3a3010;
+  --note-ink: #f2e3ae;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 18px;
+  line-height: 1.55;
+}
+main { max-width: 760px; margin: 0 auto; padding: 40px 20px 64px; }
+h1, h2 { font-family: var(--font-display); text-wrap: balance; line-height: 1.15; margin: 0; }
+h1 { font-size: clamp(1.9rem, 5vw, 2.6rem); font-weight: 700; letter-spacing: -0.01em; }
+h2 { font-size: 1.15rem; font-weight: 600; color: var(--accent); }
+p { margin: 0 0 0.75em; }
+p:last-child { margin-bottom: 0; }
+.kicker { font-size: 0.9rem; color: var(--muted); margin: 0 0 10px; }
+.lead {
+  margin: 20px 0 28px;
+  padding: 20px 22px;
+  background: var(--accent-soft);
+  border-left: 5px solid var(--accent);
+  border-radius: 4px;
+  font-size: 1.1rem;
+}
+.lead strong { font-weight: 700; }
+.qa { display: grid; gap: 0; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; }
+.row { display: grid; grid-template-columns: 170px 1fr; gap: 8px 24px; padding: 20px 22px; }
+.row + .row { border-top: 1px solid var(--line); }
+.row ul { margin: 0.4em 0 0; padding-left: 1.2em; }
+.row li { margin-bottom: 0.3em; }
+.ask { background: var(--accent-soft); }
+.ask a, .ask code { word-break: break-word; }
+.mark { background: var(--note); color: var(--note-ink); padding: 0 4px; border-radius: 3px; }
+.tools { margin-top: 32px; padding: 20px 22px; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; }
+.tools h2 { margin-bottom: 8px; }
+.pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin: 16px 0; }
+.pair figure { margin: 0; padding: 18px 12px; text-align: center; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); }
+.pair svg { width: 72px; height: 72px; color: var(--ink); }
+.pair figcaption { margin-top: 10px; font-size: 0.95rem; }
+.pair figcaption strong { display: block; font-family: var(--font-display); font-size: 1.05rem; }
+.when { margin-top: 32px; }
+.when h2 { margin-bottom: 14px; }
+ol.steps { list-style: none; margin: 0; padding: 0; border-left: 3px solid var(--line); }
+ol.steps li { position: relative; padding: 0 0 20px 22px; }
+ol.steps li:last-child { padding-bottom: 0; }
+ol.steps li::before {
+  content: "";
+  position: absolute; left: -9px; top: 7px;
+  width: 15px; height: 15px; border-radius: 50%;
+  background: var(--surface); border: 3px solid var(--accent);
+}
+ol.steps .date { display: block; font-family: var(--font-display); font-weight: 600; font-variant-numeric: tabular-nums; }
+.help { margin-top: 32px; padding: 20px 22px; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; }
+.help h2 { margin-bottom: 8px; }
+.fine { margin-top: 28px; font-size: 0.85rem; color: var(--muted); }
+a { color: var(--accent); }
+a:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+@media (max-width: 560px) {
+  body { font-size: 17px; }
+  .row { grid-template-columns: 1fr; gap: 4px; padding: 18px 16px; }
+  .lead, .help { padding: 18px 16px; }
+}
+@media print {
+  body { background: #fff; color: #000; font-size: 12pt; }
+  main { padding: 0; max-width: none; }
+  .qa, .help { border-color: #999; }
+  .lead, .ask { background: #f0f0f0; }
+  h2 { color: #000; }
+}
+</style>
+</head>
+<body>
+<main>
+  <p class="kicker">Instructional Design and Online Studies</p>
+  <h1>New Quizzes in Canvas: what is changing and what it means for you</h1>
+
+  <p class="lead"><strong>The short version:</strong> Canvas is moving from Classic Quizzes to a newer quiz tool called New Quizzes. Goodwin plans to finish the move by Spring 2028. You do not have to do anything right now. If you would like to move your quizzes during this Course Copy, there is an optional way to do it, described below.</p>
+
+  <section class="qa" aria-label="Questions and answers">
+    <div class="row">
+      <h2>What is changing</h2>
+      <div>
+        <p>Canvas has two quiz tools. Classic Quizzes is the original. New Quizzes is its replacement. A Canvas migration tool can convert a Classic quiz into a New Quiz.</p>
+        <p>About a quarter of our quizzes are already in New Quizzes.</p>
+      </div>
+    </div>
+
+    <div class="row">
+      <h2>Who it affects</h2>
+      <div>
+        <p>Everyone who gives quizzes in Canvas, full-time and adjunct. Students will see a different quiz screen. The instructional design and LMS team will support you through it.</p>
+      </div>
+    </div>
+
+    <div class="row">
+      <h2>Why</h2>
+      <div>
+        <p>Instructure, the company that makes Canvas, is moving Canvas toward New Quizzes and has said Classic Quizzes will eventually be retired. Supporting one quiz tool is simpler for you and for our team than supporting two.</p>
+      </div>
+    </div>
+
+    <div class="row">
+      <h2>Why now</h2>
+      <div>
+        <p>Instructure has not set a retirement date. It has said we can expect at least a year of notice. We would rather move step by step, with help, than in a rush when a date arrives. So Goodwin is planning to finish by Spring 2028.</p>
+      </div>
+    </div>
+
+    <div class="row">
+      <h2>What is in it for you</h2>
+      <div>
+        <p>New Quizzes offers more question types, more flexible accommodation settings for individual students, and improved analytics. Try one migrated quiz and decide whether they help you.</p>
+      </div>
+    </div>
+
+    <div class="row ask">
+      <h2>What to do now</h2>
+      <div>
+        <p><strong>Nothing is required.</strong> Your Classic quizzes will keep working as they do today.</p>
+        <p>If you would like your quizzes moved during this Course Copy, mark your course on the <span class="mark">[tab name]</span> tab of the Course Copy spreadsheet by <span class="mark">[date]</span>. We will do the migration and send you a short checklist to review before students see anything.</p>
+      </div>
+    </div>
+
+    <div class="row">
+      <h2>Good to know</h2>
+      <div>
+        <ul>
+          <li>Migration is one-way. A quiz moved to New Quizzes cannot be moved back to Classic.</li>
+          <li>New Quizzes does not yet match every Classic feature. If you rely on something specific, such as printing a quiz or searching your question banks, tell us. We are keeping a list and looking for workarounds.</li>
+          <li>We will keep a copy of your original course until the end of the term.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="tools" aria-labelledby="tools-h">
+    <h2 id="tools-h">How to tell which quiz tool you are in</h2>
+    <p>Look for the rocket icon next to a quiz's name in your course. The shape of the rocket tells you which tool that quiz uses.</p>
+    <div class="pair">
+      <figure>
+        <svg viewBox="0 0 24 24" role="img" aria-label="Outlined rocket icon" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round">
+          <path d="M12 2.5c3 2.4 4.5 5.9 4.5 9.4v3.6l2 2.4v2.1l-3.2-1.2H8.7l-3.2 1.2v-2.1l2-2.4v-3.6C7.5 8.4 9 4.9 12 2.5z"/>
+          <circle cx="12" cy="10" r="1.9"/>
+          <path d="M10.2 20.2c.4 1 1 1.7 1.8 2.1.8-.4 1.4-1.1 1.8-2.1"/>
+        </svg>
+        <figcaption><strong>Outlined rocket</strong>Classic Quizzes</figcaption>
+      </figure>
+      <figure>
+        <svg viewBox="0 0 24 24" role="img" aria-label="Filled rocket icon" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round">
+          <path fill="currentColor" d="M12 2.5c3 2.4 4.5 5.9 4.5 9.4v3.6l2 2.4v2.1l-3.2-1.2H8.7l-3.2 1.2v-2.1l2-2.4v-3.6C7.5 8.4 9 4.9 12 2.5z"/>
+          <circle cx="12" cy="10" r="1.9" fill="var(--bg)" stroke="none"/>
+          <path fill="none" d="M10.2 20.2c.4 1 1 1.7 1.8 2.1.8-.4 1.4-1.1 1.8-2.1"/>
+        </svg>
+        <figcaption><strong>Filled-in rocket</strong>New Quizzes</figcaption>
+      </figure>
+    </div>
+    <p>If a quiz already shows the filled-in rocket, it is a New Quiz and needs nothing from you. If you are not sure which one you have, ask us at <span class="mark">[email]</span>.</p>
+  </section>
+
+  <section class="when" aria-labelledby="next-h">
+    <h2 id="next-h">What happens next</h2>
+    <ol class="steps">
+      <li><span class="date">Spring 2027</span>Optional migration at Course Copy, plus short training sessions and open office hours.</li>
+      <li><span class="date">Later in 2027</span>Program-by-program migration on a schedule, with our team doing as much of the work as we can. You will hear from us before your program's turn.</li>
+      <li><span class="date">Spring 2028</span>All courses on New Quizzes.</li>
+    </ol>
+  </section>
+
+  <section class="help" aria-labelledby="help-h">
+    <h2 id="help-h">Questions or concerns</h2>
+    <p>Contact <span class="mark">[name]</span> at <span class="mark">[email]</span>. Open office hours: <span class="mark">[day and time]</span>.</p>
+    <p>If your courses depend heavily on quizzes, we especially want to hear from you now.</p>
+  </section>
+
+  <p class="fine">Dates for later phases are plans and may shift. We will tell you before anything changes for your courses.</p>
+</main>
+</body>
+</html>
